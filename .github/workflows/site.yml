@@ -50,6 +50,19 @@ jobs:
           gh release download "$PERSONAL_VERSION" --repo johnhenning/outfit-personal --pattern "outfit-personal_${PERSONAL_VERSION}.tar.gz" --pattern SHA256SUMS --dir personal-release
           (cd personal-release && sha256sum -c SHA256SUMS)
           python3 scripts/generate_personal_site.py release-lock.json personal-release "$PERSONAL_VERSION" published-site/personal
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Generate profile browser from the pinned bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_VERSION: ${{ inputs.version || github.event.release.tag_name }}
+        run: |
+          mkdir browser-engine
+          gh release download "$RELEASE_VERSION" --pattern "outfit_${RELEASE_VERSION}_linux_amd64" --dir browser-engine
+          chmod +x "browser-engine/outfit_${RELEASE_VERSION}_linux_amd64"
+          go run ./cmd/outfit-profile-browser --lock release-lock.json --engine "browser-engine/outfit_${RELEASE_VERSION}_linux_amd64" --output published-site/tools/outfit/profiles/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

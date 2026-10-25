@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Browse profiles — Outfit</title>
+<style>
+:root{color-scheme:dark;--bg:#11151b;--panel:#1c2530;--text:#e1e8ef;--muted:#a9b9c8;--line:#303d4b;--accent:#8dcdf3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,sans-serif}a{color:var(--accent)}button,input,select{font:inherit}button,select,summary{cursor:pointer}a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.shell{max-width:1120px;margin:auto;padding:36px 28px 70px}.masthead{display:flex;justify-content:space-between;gap:20px;align-items:center;padding-bottom:38px}.brand{font-size:26px;font-weight:750;letter-spacing:-1px;text-decoration:none;color:var(--text)}.masthead>a:last-child{font-size:14px}h1{font-size:44px;line-height:1.15;letter-spacing:-1.7px;margin:0 0 14px}h2{font-size:30px;line-height:1.2;margin:0 0 10px;letter-spacing:-.8px}h3{font-size:19px;margin:28px 0 10px}p{margin:8px 0 16px}.muted,.intro{color:var(--muted)}.intro{max-width:700px;margin-bottom:32px}.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:44px}.profile-nav{align-self:start;position:sticky;top:24px}.profile-nav a{display:block;padding:12px 14px;margin:3px 0;border-radius:6px;text-decoration:none;color:var(--muted);border:1px solid transparent}.profile-nav a:hover{color:var(--text);background:#17202a}.profile-nav a[aria-current="page"]{color:var(--text);background:var(--panel);border-color:var(--line)}.profile-nav small{display:block;font-size:12px;color:var(--muted)}.profile-top{display:flex;justify-content:space-between;gap:24px;align-items:start}.platform-field{flex:0 0 215px}.platform-field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}select{width:100%;padding:9px 32px 9px 10px;border:1px solid var(--line);border-radius:5px;background:var(--panel);color:var(--text)}.eyebrow{color:var(--accent);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 8px}.summary{color:var(--muted);font-size:14px;border-bottom:1px solid var(--line);padding:12px 0 18px;margin-bottom:0}.package-list{list-style:none;padding:0;margin:0}.package-list li{padding:13px 0;border-bottom:1px solid var(--line)}.package-heading{display:flex;justify-content:space-between;gap:16px;align-items:baseline}.package-heading a{color:var(--text);text-decoration:none;font-weight:600}.package-heading a:hover{text-decoration:underline}.package-detail{font-size:13px;color:var(--muted);margin-top:2px}.package-detail code{font-size:12px}.tag{font-size:11px;white-space:nowrap;color:var(--muted)}.tag.manual{color:#f2c879}.manual-reason{font-size:13px;color:#d6bd8f;margin:6px 0 0}.empty{color:var(--muted);font-size:14px}.command-label{font-size:14px;color:var(--muted);margin-bottom:4px}pre{font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;overflow:auto;white-space:pre;background:var(--panel);border-radius:7px;padding:18px;margin:0}.code-block{position:relative;margin:8px 0 20px;background:var(--panel);border-radius:7px}.copy-button{position:absolute;top:50%;right:12px;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;padding:7px;border:0;border-radius:5px;background:rgba(28,37,48,.9);color:var(--text);opacity:.85;cursor:pointer;transition:opacity .15s,background .15s}.copy-button svg{width:22px;height:22px;display:block;pointer-events:none}.copy-button:hover,.copy-button:focus-visible{opacity:1;background:#35485c}.copy-button[data-state="copied"]{color:#9be0b0;opacity:1}.copy-button[data-state="error"]{color:#f2c879;opacity:1}.copy-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}details{margin:18px 0;border-bottom:1px solid var(--line);padding-bottom:14px}summary{font-size:14px;color:var(--muted)}details[open]>summary{color:var(--text);margin-bottom:14px}.preset{margin:0 0 18px}.preset h4{font-size:14px;margin:0 0 3px}.preset p{font-size:13px;color:var(--muted);margin:0}.preset code{color:var(--accent)}.note-list{padding-left:20px;color:var(--muted);font-size:13px}.release{margin-top:34px;color:var(--muted);font-size:12px}.digest{overflow-wrap:anywhere;font-family:ui-monospace,monospace;font-size:11px}.footer{margin-top:44px;color:var(--muted);font-size:13px}#profile-description{max-width:520px}#prerequisite{font-size:13px;color:var(--muted)}
+@media(max-width:760px){.shell{padding:24px 20px 48px}.masthead{padding-bottom:26px}h1{font-size:36px}.layout{grid-template-columns:1fr;gap:24px}.profile-nav{position:static;display:flex;flex-wrap:wrap;gap:5px}.profile-nav a{flex:1 1 42%;padding:9px 12px}.profile-nav small{font-size:11px}.profile-top{flex-direction:column;gap:14px}.platform-field{flex:auto;width:100%}.package-heading{gap:10px}.intro{margin-bottom:18px}}
+@media(prefers-reduced-motion:reduce){.copy-button{transition:none}}
+</style>
+<div class="shell">
+<header class="masthead"><a class="brand" href="../">outfit</a><a href="https://github.com/johnhenning/outfit-profiles">Profile source</a></header>
+<h1>Browse profiles</h1>
+<p class="intro">Find a starting point for your machine. See what’s included on each platform, then preview it before making changes.</p>
+<div class="layout">
+<nav class="profile-nav" id="profile-nav" aria-label="Profiles"></nav>
+<main>
+<div class="profile-top"><div><p class="eyebrow" id="environment"></p><h2 id="profile-title"></h2></div>
+<div class="platform-field"><label for="platform">Preview platform</label><select id="platform"></select></div></div>
+<p class="muted" id="profile-description"></p>
+<p class="summary" id="summary" aria-live="polite"></p>
+<h3>Included software</h3><ul class="package-list" id="packages"></ul>
+<p id="prerequisite"></p>
+<details id="platform-notes" hidden><summary>Platform notes</summary><ul class="note-list" id="notes"></ul></details>
+<h3>Try this profile</h3><p class="muted" id="command-context"></p>
+<p class="command-label">Preview without changes</p><pre id="preview-command"></pre>
+<p class="command-label">Open setup for review</p><pre id="setup-command"></pre>
+<p class="empty">Setup uses a temporary CLI. You can change software choices in Advanced before approving the plan. Dotfiles are reviewed and applied separately.</p>
+<details><summary id="optional-label">Optional presets</summary><div id="presets"></div><p class="empty">These are additional selections, not included software. Add presets in the setup menu or with <code>--preset NAME</code>. Desktop-only apps are skipped for headless roles.</p></details>
+<details><summary>Configuration files</summary><div id="dotfiles"></div></details>
+<p class="release" id="release-label"></p>
+<details><summary>Release details</summary><p class="empty">This page is generated from the same verified profile bundle used by the installer scripts.</p><a id="bundle-source">Download the pinned profile bundle</a><p class="digest" id="bundle-sha"></p></details>
+</main></div>
+<footer class="footer">Package versions come from your package manager. Manual steps are shown explicitly; a resolved plan does not mean every clean-machine installation has been tested. <a href="../">Back to install</a>.</footer>
+<noscript><p>Enable JavaScript to browse the profile contents, or <a href="https://github.com/johnhenning/outfit-profiles">read the public profile source</a>.</p></noscript>
+</div>
+<script id="profile-data" type="application/json">__OUTFIT_PROFILE_DATA__</script>
+<script>
+const data = JSON.parse(document.getElementById('profile-data').textContent);
+const catalog = data.catalog;
+const packages = new Map(catalog.packages.map(pkg => [pkg.id, pkg]));
+const files = new Map((catalog.dotfiles || []).map(file => [file.id, file]));
+const categories = new Map((catalog.categories || []).map(cat => [cat.id, cat.name === 'Cli' ? 'CLI' : cat.name]));
+const providerNames = {brew:'Homebrew',apt:'apt',dnf:'dnf',winget:'WinGet',uv:'uv tool',vendor:'Official installer',manual:'Manual'};
+const targets = {'macos-arm64':'macOS · Apple silicon','macos-amd64':'macOS · Intel','debian-amd64':'Debian / Ubuntu · x64','debian-arm64':'Debian / Ubuntu · ARM64','fedora-amd64':'Fedora · x64','fedora-arm64':'Fedora · ARM64','windows-amd64':'Windows · x64','windows-arm64':'Windows · ARM64'};
+const descriptions = {
+ workstation:['Workstation','Desktop','A desktop with Chrome, VS Code, Python tooling and the common development basics.'],
+ dev:['Development','Headless','Development tools for terminals, servers and WSL. Desktop apps are omitted.'],
+ compute:['Compute','Headless','A small foundation for compute nodes, with Python tooling, tmux and monitoring.'],
+ media:['Media','Headless','A media-processing foundation with FFmpeg and monitoring. Storage and server services are configured separately.']
+};
+const byId = id => document.getElementById(id);
+const make = (tag, text, className) => { const node=document.createElement(tag); if(text !== undefined)node.textContent=text; if(className)node.className=className; return node; };
+const copyResets=[];
+const names=[...['workstation','dev','compute','media'].filter(id => catalog.profiles[id]), ...Object.keys(catalog.profiles).filter(id => !descriptions[id])];
+const platform=byId('platform');
+Object.entries(targets).forEach(([value,label]) => {const option=make('option',label);option.value=value;platform.append(option);});
+const requested=new URL(location.href).searchParams.get('platform');
+platform.value=targets[requested] ? requested : 'macos-arm64';
+names.forEach(id => {
+ const info=descriptions[id] || [id,'Profile',''];
+ const link=make('a',info[0]);link.href='#'+encodeURIComponent(id);link.dataset.profile=id;
+ link.append(make('small',info[1]));byId('profile-nav').append(link);
+});
+function safeLink(node, value) {
+ try {const url=new URL(value);if(url.protocol==='https:' && !url.username && !url.password){node.href=url.href;return true;}} catch {}
+ return false;
+}
+function render() {
+ const id=names.includes(location.hash.slice(1)) ? location.hash.slice(1) : names[0];
+ const target=platform.value;
+ const plan=data.plans[id][target];
+ const profile=catalog.profiles[id];
+ const info=descriptions[id] || [id,plan.target.desktop?'Desktop':'Headless',''];
+ byId('profile-title').textContent=info[0];byId('environment').textContent=plan.target.desktop?'Desktop profile':'Headless profile';byId('profile-description').textContent=info[2];
+ document.querySelectorAll('[data-profile]').forEach(link => {if(link.dataset.profile===id)link.setAttribute('aria-current','page');else link.removeAttribute('aria-current');});
+ const actions=plan.actions.filter(action => action.kind==='package');
+ const dotfiles=plan.actions.filter(action => action.kind==='dotfile');
+ const manual=actions.filter(action => action.manual_reason).length;
+ byId('summary').textContent=`${actions.length} packages · ${manual} manual ${manual===1?'step':'steps'} · ${dotfiles.length} configuration ${dotfiles.length===1?'file':'files'}`;
+ byId('packages').replaceChildren();
+ actions.forEach(action => {
+  const pkg=packages.get(action.package_id);
+  const row=make('li');const heading=make('div',undefined,'package-heading');const link=make('a',pkg.name);safeLink(link,pkg.source);
+  heading.append(link,make('span',action.manual_reason?'Manual step':'Automatic','tag'+(action.manual_reason?' manual':'')));row.append(heading);
+  const install=pkg.installs[target.split('-')[0]];
+  row.append(make('div',`${categories.get(pkg.category)||pkg.category} · ${providerNames[action.provider]||action.provider}`+(install.package?` · ${install.package}`:''),'package-detail'));
+  if(action.manual_reason)row.append(make('p',action.manual_reason,'manual-reason'));
+  byId('packages').append(row);
+ });
+ const prerequisites=plan.actions.filter(action => action.kind==='prerequisite');
+ byId('prerequisite').textContent=prerequisites.map(action => action.package_id==='brew'?'Homebrew is installed first if needed.':action.description).join(' ');
+ byId('notes').replaceChildren();(plan.notes||[]).forEach(note => byId('notes').append(make('li',note)));
+ byId('platform-notes').hidden=!(plan.notes||[]).length;
+ byId('platform-notes').querySelector('summary').textContent=`Platform notes (${(plan.notes||[]).length})`;
+ const known=['workstation','dev','compute','media'].includes(id);
+ const windows=target.startsWith('windows-');
+ const endpoint=`https://getoutfit.dev/profiles/${id}.${windows?'ps1':'sh'}`;
+ byId('command-context').textContent=windows?`Use PowerShell on Windows. The preview simulates ${targets[target]}; run setup on a matching machine.`:`Preview ${targets[target]} from a macOS or Linux terminal. To install, run setup on a matching machine. For WSL, use the Linux commands inside your distribution.`;
+ byId('preview-command').textContent=known ? (windows?`& ([scriptblock]::Create((irm ${endpoint}))) -DryRun --target ${target}`:`curl -fsSL ${endpoint} | sh -s -- --dry-run --target ${target}`) : `outfit plan --profile ${id} --target ${target}`;
+ byId('setup-command').textContent=known ? (windows?`irm ${endpoint} | iex`:`curl -fsSL ${endpoint} | sh`) : `outfit setup --profile ${id}`;
+ byId('presets').replaceChildren();
+ const optional=Object.entries(catalog.presets||{}).filter(([name,preset]) => !(profile.presets||[]).includes(name) && ((preset.packages||[]).length || (preset.dotfiles||[]).length));
+ byId('optional-label').textContent=`Optional presets (${optional.length})`;
+ optional.forEach(([name,preset]) => {
+  const section=make('section',undefined,'preset');const title=make('h4');title.append(make('code',name));section.append(title);
+  const choices=(preset.packages||[]).map(id => {const pkg=packages.get(id);return pkg.name+(pkg.desktop&&!plan.target.desktop?' (desktop only)':'');});
+  choices.push(...(preset.dotfiles||[]).map(id => {const file=files.get(id);return '~/'+file.target+(file.platforms&&!file.platforms.includes(target.split('-')[0])?' (not used on this platform)':'');}));
+  section.append(make('p',choices.join(', ')));byId('presets').append(section);
+ });
+ byId('dotfiles').replaceChildren();
+ if(!dotfiles.length)byId('dotfiles').append(make('p','No configuration files are selected by default. Opt in to configuration presets when you want them.','empty'));
+ dotfiles.forEach(action => {const file=files.get(action.package_id);byId('dotfiles').append(make('p','~/'+file.target+(file.private?' · existing files require manual merging':''),'empty'));});
+ byId('release-label').textContent=`Profiles ${data.release.profiles} · CLI ${data.release.engine}`;
+ safeLink(byId('bundle-source'),data.release.source);byId('bundle-sha').textContent='SHA-256: '+data.release.sha256;
+ copyResets.forEach(reset => reset());
+}
+platform.addEventListener('change',() => {const url=new URL(location.href);url.searchParams.set('platform',platform.value);history.replaceState(null,'',url);render();});
+function syncFromURL() {const value=new URL(location.href).searchParams.get('platform');platform.value=targets[value]?value:'macos-arm64';render();}
+window.addEventListener('hashchange',syncFromURL);
+window.addEventListener('popstate',syncFromURL);
+render();
+document.querySelectorAll('pre').forEach((block,index) => {
+ const wrapper=make('div',undefined,'code-block');block.before(wrapper);wrapper.append(block);
+ const button=make('button',undefined,'copy-button');button.type='button';
+ const icons={copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="13" height="13" rx="3"/><rect x="3" y="8" width="13" height="13" rx="3" fill="#1c2530"/></svg>',copied:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>',error:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v9M12 18v1"/></svg>'};
+ const status=make('span',undefined,'copy-status');status.setAttribute('role','status');wrapper.append(button,status);
+ let timer;
+ const setState=state => {button.innerHTML=icons[state];button.dataset.state=state;button.title=state==='copied'?'Copied!':state==='error'?'Try copying again':'Copy code';button.setAttribute('aria-label',`${button.title} — block ${index+1}`);};
+ const reset=() => {clearTimeout(timer);setState('copy');status.textContent='';};copyResets.push(reset);reset();
+ button.addEventListener('click',async() => {clearTimeout(timer);button.disabled=true;try{await navigator.clipboard.writeText(block.textContent);setState('copied');status.textContent='Code copied to clipboard.';}catch{setState('error');status.textContent='Could not copy. Select the code and copy it manually.';}finally{button.disabled=false;timer=setTimeout(reset,2500);}});
+});
+</script>
+</html>
