@@ -6,6 +6,14 @@
   "workers_dev": true,
   "routes": [
     {
+      "pattern": "getoutfit.dev",
+      "custom_domain": true
+    },
+    {
+      "pattern": "johnhenning.dev/tools/outfit",
+      "zone_name": "johnhenning.dev"
+    },
+    {
       "pattern": "johnhenning.dev/tools/outfit/*",
       "zone_name": "johnhenning.dev"
     }

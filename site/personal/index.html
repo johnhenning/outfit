@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>John’s personal Outfit profiles</title>
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:780px;margin:70px auto;padding:0 24px;background:#11151b;color:#e1e8ef}h1{font-size:56px;letter-spacing:-3px;margin-bottom:0}p{color:#b7c5d3}a{color:#8dcdf3}pre{background:#1c2530;padding:18px;overflow:auto;border-radius:8px;font-size:14px}h2{margin-top:40px}small{color:#9caebd}
+.code-block{position:relative;margin:1em 0;background:#1c2530;border-radius:8px;padding-top:38px}
+.code-block pre{margin:0;padding-top:8px}
+.copy-button{position:absolute;top:8px;right:8px;min-height:30px;padding:3px 10px;border:1px solid #526376;border-radius:5px;background:#263342;color:#e1e8ef;font:12px/1.5 system-ui,sans-serif;cursor:pointer}
+.copy-button:hover{background:#35485c}
+.copy-button:focus-visible{outline:2px solid #8dcdf3;outline-offset:3px}
+.copy-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+</style>
+<h1>John’s outfit</h1>
+<p>Personal Mac selections. Everyday and Dev are independent profiles.</p>
+<p>These are public, nonsecret configurations. Sign in to 1Password and individual apps afterward for private credentials and synced data. No GitHub authentication is needed to download these profiles.</p>
+<h2>Mac Everyday</h2>
+<p>Daily apps and Mac utilities, including Spotify, Setapp, Bartender, Rectangle Pro and Raycast.</p>
+<pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/mac/everyday.sh | sh -s -- --dry-run</pre>
+<p>Remove <code>--dry-run</code> to open setup for review and confirmation. The CLI is temporary.</p>
+<h2>Mac Dev</h2>
+<p>Development tools with Dia, VS Code, Neovim and iTerm2 preferences. Spotify and the Everyday-only utilities are excluded.</p>
+<pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/mac/dev.sh | sh -s -- --dry-run</pre>
+<h2>After installing</h2>
+<ul><li>Sign in to 1Password; enable the SSH agent and optional CLI integration.</li>
+<li>Sign in to apps to restore their private synced data.</li>
+<li>Everyday: sign in to Setapp and install CleanShot X and Paste there. Activate paid apps with your licenses.</li>
+<li>Everyday: enable launch at login for Bartender, Rectangle Pro and Raycast. This remains a manual step.</li>
+<li>Dev: finish the guided Oh My Zsh and Powerlevel10k installs if desired.</li>
+<li>Review and apply dotfiles separately. Existing private SSH configs require manual merging; no keys or sessions are restored from these public files.</li></ul>
+<p>The personal <code>install.sh</code> and <code>run.sh</code> entry points start Everyday setup. To install only the general CLI, use <a href="https://getoutfit.dev/">getoutfit.dev</a>.</p>
+<p><a href="https://github.com/johnhenning/outfit-personal">Review the personal selections and configuration sources</a> · <a href="https://getoutfit.dev/">General Outfit profiles</a></p>
+<p><small>Mac profiles are reviewed; compute and media personal profiles await review. The scripts verify pinned CLI and bundle checksums before setup. No software is installed by a dry run.</small></p>
+<script>
+document.querySelectorAll('pre').forEach((block, index) => {
+  const text = block.textContent;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'code-block';
+  block.before(wrapper);
+  wrapper.append(block);
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'copy-button';
+  button.textContent = 'Copy';
+  button.setAttribute('aria-label', `Copy code block ${index + 1}`);
+  const status = document.createElement('span');
+  status.className = 'copy-status';
+  status.setAttribute('role', 'status');
+  wrapper.append(button, status);
+  let reset;
+  button.addEventListener('click', async () => {
+    clearTimeout(reset);
+    button.disabled = true;
+    status.textContent = '';
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = 'Copied!';
+      status.textContent = 'Code copied to clipboard.';
+    } catch {
+      button.textContent = 'Try again';
+      status.textContent = 'Could not copy. Select the code and copy it manually.';
+    } finally {
+      button.disabled = false;
+      reset = setTimeout(() => {
+        button.textContent = 'Copy';
+        status.textContent = '';
+      }, 2500);
+    }
+  });
+});
+</script>
+</html>

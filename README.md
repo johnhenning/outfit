@@ -2,31 +2,31 @@
 
 Equip a workstation, development environment, compute node, or media node from reusable profiles.
 
-Outfit is the Go CLI/TUI and bootstrap runtime. Public software catalogs and dotfile templates live in [outfit-profiles](https://github.com/johnhenning/outfit-profiles); optional personal profiles are loaded as a separate authenticated overlay. The binary contains provider implementations and a schema, not personal software defaults.
+Outfit is the Go CLI/TUI and bootstrap runtime. Public software catalogs and dotfile templates live in [outfit-profiles](https://github.com/johnhenning/outfit-profiles); personal profiles are loaded separately and can be public nonsecret bundles or authenticated private overlays. The binary contains provider implementations and a schema, not personal software defaults.
 
 ## Entry points
 
-Planned custom-domain endpoints (not live until hosting/DNS is configured):
+General Outfit endpoints (deployment status is recorded in the release notes):
 
 ```sh
 # Install only the Outfit CLI.
-curl -fsSL https://johnhenning.dev/tools/outfit/install.sh | sh
+curl -fsSL https://getoutfit.dev/install.sh | sh
 
 # Run the interactive wizard using a temporary CLI.
-curl -fsSL https://johnhenning.dev/tools/outfit/run.sh | sh
+curl -fsSL https://getoutfit.dev/run.sh | sh
 
 # Preview a known profile without changing your machine.
-curl -fsSL https://johnhenning.dev/tools/outfit/profiles/workstation.sh | sh -s -- --dry-run
+curl -fsSL https://getoutfit.dev/profiles/workstation.sh | sh -s -- --dry-run
 
 # Start from a known profile; no prior Outfit, Python, Go or Git installation.
-curl -fsSL https://johnhenning.dev/tools/outfit/profiles/compute.sh | sh
+curl -fsSL https://getoutfit.dev/profiles/compute.sh | sh
 ```
 
 Windows equivalents end in `.ps1`:
 
 ```powershell
-irm https://johnhenning.dev/tools/outfit/install.ps1 | iex
-irm https://johnhenning.dev/tools/outfit/profiles/workstation.ps1 | iex
+irm https://getoutfit.dev/install.ps1 | iex
+irm https://getoutfit.dev/profiles/workstation.ps1 | iex
 ```
 
 Known-profile scripts pin the CLI and config bundle independently, verify downloads, and open a review before applying. Unix unattended invocation is `curl .../compute.sh | sh -s -- --yes`. Inspect the script and profile before using unattended mode. Download first and run the local file if you prefer reviewing it before execution. Checksums alongside release assets provide integrity checks; they do not independently establish publisher authenticity.
@@ -57,15 +57,24 @@ Reusing a plan requires identical config-bundle contents, selection and target. 
 
 ## Personal configuration and credentials
 
-Start from a public template. Once Git and GitHub CLI are installed:
+Public, nonsecret selections can be packaged with the public templates as a
+standalone bundle. The personal Mac entry points use such a bundle and need no
+GitHub authentication or preinstalled Outfit CLI:
 
 ```sh
-outfit personalize --repo johnhenning/outfit-personal
-# The command opens GitHub sign-in if needed and prints the private local directory.
-outfit setup --source ./public-profiles --personal /printed/private/directory --profile john-dev
+curl -fsSL https://johnhenning.dev/tools/outfit/profiles/mac/everyday.sh | sh -s -- --dry-run
+curl -fsSL https://johnhenning.dev/tools/outfit/profiles/mac/dev.sh | sh -s -- --dry-run
 ```
 
-GitHub authentication protects private profile data. Secrets remain in 1Password; private repositories should contain references, never private keys or token values. `outfit doctor` explains desktop CLI/SSH-agent setup and the separate headless path. Authorize vault access in 1Password when needed.
+Those are John's personal selections; use getoutfit.dev for general templates.
+Sign in to 1Password and apps afterward to access private credentials and synced
+data. Publishing a profile never publishes or restores those private values.
+
+Private overlays remain supported. Once Git and GitHub CLI are installed, use
+`outfit personalize --repo OWNER/PRIVATE_REPO` to authenticate and fetch one,
+then pass its printed path with `--personal` to setup or plan. Keep private keys
+and tokens out of both public and private profile repos. `outfit doctor` explains
+credential setup; authorize vault access separately when needed.
 
 ```sh
 outfit secrets run --env-file refs.env -- your-command
