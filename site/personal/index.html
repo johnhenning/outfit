@@ -3,8 +3,8 @@
 <style>body{font:17px/1.6 system-ui,sans-serif;max-width:780px;margin:70px auto;padding:0 24px;background:#11151b;color:#e1e8ef}h1{font-size:56px;letter-spacing:-3px;margin-bottom:0}p{color:#b7c5d3}a{color:#8dcdf3}pre{background:#1c2530;padding:18px;overflow:auto;border-radius:8px;font-size:14px}h2{margin-top:40px}small{color:#9caebd}
 .code-block{position:relative;margin:1em 0;background:#1c2530;border-radius:8px}
 .code-block pre{margin:0;padding:18px}
-.copy-button{position:absolute;top:8px;right:8px;width:32px;height:32px;display:grid;place-items:center;padding:6px;border:0;border-radius:5px;background:rgba(28,37,48,.65);color:#e1e8ef;opacity:.3;cursor:pointer;transition:opacity .15s,background .15s}
-.copy-button svg{width:18px;height:18px;display:block;pointer-events:none}
+.copy-button{position:absolute;top:50%;right:12px;transform:translateY(-50%);width:36px;height:36px;display:grid;place-items:center;padding:7px;border:0;border-radius:5px;background:rgba(28,37,48,.9);color:#e1e8ef;opacity:.85;cursor:pointer;transition:opacity .15s,background .15s}
+.copy-button svg{width:22px;height:22px;display:block;pointer-events:none}
 .copy-button:hover,.copy-button:focus-visible{opacity:1;background:rgba(53,72,92,.95)}
 .copy-button:focus-visible{outline:2px solid #8dcdf3;outline-offset:2px}
 .copy-button[data-state="copied"]{color:#9be0b0;opacity:1}
@@ -43,7 +43,7 @@ document.querySelectorAll('pre').forEach((block, index) => {
   button.type = 'button';
   button.className = 'copy-button';
   const icons = {
-    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg>',
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="13" height="13" rx="3"/><rect x="3" y="8" width="13" height="13" rx="3" fill="#1c2530"/></svg>',
     copied: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>',
     error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v9M12 18v1"/></svg>'
   };
