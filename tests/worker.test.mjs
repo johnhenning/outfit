@@ -37,3 +37,12 @@ test('legacy general-domain namespace redirects to canonical root paths',async()
  assert.equal(response.status,308);
  assert.equal(response.headers.get('Location'),'https://getoutfit.dev/profiles/dev.sh?preview=1');
 });
+test('profile browser canonicalizes its directory without dropping platform selection',async()=>{
+ const original=globalThis.fetch;
+ try {
+  globalThis.fetch=async()=>new Response('unexpected upstream request');
+  const response=await worker.fetch(new Request('https://getoutfit.dev/profiles?platform=windows-amd64'));
+  assert.equal(response.status,308);
+  assert.equal(response.headers.get('Location'),'https://getoutfit.dev/profiles/?platform=windows-amd64');
+ }finally{globalThis.fetch=original;}
+});

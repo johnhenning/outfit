@@ -85,6 +85,11 @@ Describe 'Outfit Windows bootstrap' {
         & $installScript -DryRun
         Test-Path $env:OUTFIT_INSTALL_DIR | Should -BeFalse
     }
+    It 'accepts the website scriptblock preview syntax with a simulated target' {
+        $downloaded = Get-Content -LiteralPath $installScript -Raw
+        & ([scriptblock]::Create($downloaded)) -DryRun --target windows-amd64
+        Test-Path $env:OUTFIT_INSTALL_DIR | Should -BeFalse
+    }
     It 'all generated scripts parse as PowerShell' {
         Get-ChildItem $fixture -Filter '*.ps1' -Recurse | ForEach-Object {
             $tokens = $null; $parseErrors = $null

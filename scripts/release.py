@@ -30,6 +30,8 @@ def main():
  (a.output/'release-lock.json').write_text(json.dumps(lock,indent=2)+'\n');generate(lock,a.output/'site/tools/outfit');generate(lock,a.output/'site/tools/outfit/v1')
  source=ROOT/'site/tools/outfit/index.html'
  if source.exists():(a.output/'site/tools/outfit/index.html').write_bytes(source.read_bytes())
+ host_os,host_arch=subprocess.check_output([a.go,'env','GOHOSTOS','GOHOSTARCH'],text=True).split();native=a.output/f'outfit_{a.version}_{host_os}_{host_arch}{".exe" if host_os=="windows" else ""}'
+ subprocess.run([a.go,'run','./cmd/outfit-profile-browser','--lock',str((a.output/'release-lock.json').resolve()),'--engine',str(native.resolve()),'--output',str((a.output/'site/tools/outfit/profiles/index.html').resolve())],cwd=ROOT,check=True)
  bundle(a.output/'site', a.output/'outfit-site.tar.gz')
  write_checksums(a.output,a.version)
  print('Release lock and bootstrap endpoints written to',a.output)

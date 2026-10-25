@@ -11,6 +11,9 @@ export default {
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } });
     }
+    if (general && incoming.pathname === '/profiles') {
+      return Response.redirect(incoming.origin + '/profiles/' + incoming.search, 308);
+    }
     if (personal && incoming.pathname === '/tools/outfit') {
       return Response.redirect(incoming.origin + '/tools/outfit/' + incoming.search, 308);
     }

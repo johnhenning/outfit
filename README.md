@@ -6,6 +6,13 @@ Outfit is the Go CLI/TUI and bootstrap runtime. Public software catalogs and dot
 
 ## Entry points
 
+Browse the public profiles at [getoutfit.dev/profiles/](https://getoutfit.dev/profiles/).
+Choose a platform to inspect the exact included software, manual steps,
+configuration files and optional presets, then copy a preview or setup command.
+The page is generated with the checksum-verified released CLI and public bundle
+from the release lock, so it follows the installer version rather than
+the latest unpublished catalog edits. Advanced per-app choices remain in the CLI.
+
 General Outfit endpoints (deployment status is recorded in the release notes):
 
 ```sh
