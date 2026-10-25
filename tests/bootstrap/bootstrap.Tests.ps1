@@ -15,6 +15,48 @@ Describe 'Outfit Windows bootstrap' {
         $destination = Join-Path $env:OUTFIT_INSTALL_DIR 'outfit.exe'
         (Get-FileHash $destination).Hash | Should -Be (Get-FileHash $binaryFixture).Hash
     }
+    It 'reports success and copyable PowerShell PATH instructions' {
+        $env:OUTFIT_INSTALL_DIR = Join-Path $TestDrive "John's tools"
+        $output = (& $installScript 6>&1 | Out-String)
+        $output | Should -Match 'installed successfully'
+        $output | Should -Match 'v0.0.0-test'
+        $output | Should -Match 'outfit version'
+        $output | Should -Match 'outfit setup'
+        $output | Should -Match 'outfit doctor'
+        $line = @($output -split '\r?\n' | Where-Object { $_.Trim().StartsWith('$env:Path =') })[0].Trim()
+        $previous = $env:Path
+        try {
+            & ([scriptblock]::Create($line))
+            ($env:Path -split ';')[0] | Should -Be $env:OUTFIT_INSTALL_DIR
+        } finally { $env:Path = $previous }
+    }
+    It 'does not report PATH ready when an older CLI shadows the installed CLI' {
+        Mock Get-Command { [pscustomobject]@{ Source = 'C:\older\outfit.exe'; CommandType = 'Application' } } -ParameterFilter { $Name -eq 'outfit' }
+        $previous = $env:Path
+        try {
+            $env:Path = $env:Path + ';' + $env:OUTFIT_INSTALL_DIR
+            $output = (& $installScript 6>&1 | Out-String)
+            $output | Should -Not -Match 'PATH is ready'
+            $output | Should -Match 'Another Outfit is earlier on PATH'
+        } finally { $env:Path = $previous }
+    }
+    It 'reports PATH ready when command resolution points to the installed CLI' {
+        Mock Get-Command { [pscustomobject]@{ Source = (Join-Path $env:OUTFIT_INSTALL_DIR 'outfit.exe'); CommandType = 'Application' } } -ParameterFilter { $Name -eq 'outfit' }
+        $output = (& $installScript 6>&1 | Out-String)
+        $output | Should -Match 'PATH is ready'
+        $output | Should -Not -Match '\$env:Path ='
+    }
+    It 'printed user PATH calculation moves an existing entry to the front without duplicates' {
+        $output = (& $installScript 6>&1 | Out-String)
+        $lines = @($output -split '\r?\n' | ForEach-Object { $_.Trim() } | Where-Object { $_ -match '^\$(outfitBin|userEntries|newUserPath) =' })
+        $fixturePath = ('older;' + $env:OUTFIT_INSTALL_DIR + ';other;' + $env:OUTFIT_INSTALL_DIR).Replace("'", "''")
+        # Execute only the printed calculation against synthetic input, never the registry write.
+        $calculation = ($lines -join "`n").Replace("[Environment]::GetEnvironmentVariable('Path', 'User')", "'$fixturePath'")
+        $newPath = & ([scriptblock]::Create($calculation + "`n" + '$newUserPath'))
+        @($newPath -split ';')[0] | Should -Be $env:OUTFIT_INSTALL_DIR
+        @($newPath -split ';' | Where-Object { $_ -eq $env:OUTFIT_INSTALL_DIR }).Count | Should -Be 1
+        @($newPath -split ';').Count | Should -Be 3
+    }
     It 'rejects checksum mismatch without replacing the old CLI' {
         New-Item -ItemType Directory $env:OUTFIT_INSTALL_DIR | Out-Null
         $destination = Join-Path $env:OUTFIT_INSTALL_DIR 'outfit.exe'

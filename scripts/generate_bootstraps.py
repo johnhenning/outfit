@@ -18,18 +18,11 @@ def shell(lock,mode,profile=''):
  validate(lock)
  if mode not in ['run','install'] or (profile and not re.fullmatch(r'[a-z0-9-]+',profile)):raise ValueError('invalid bootstrap mode/profile')
  checks='\n'.join(f'    {k}) expected={v} ;;' for k,v in sorted(lock['engines'].items()) if not k.startswith('windows'))
- action='''  install_dir=${OUTFIT_INSTALL_DIR:-"$HOME/.local/bin"}
-  mkdir -p "$install_dir"
-  [ ! -L "$install_dir/outfit" ] || { echo 'Refusing to replace a symlink at the Outfit install path.' >&2; exit 1; }
-  staged=$(mktemp "$install_dir/.outfit-XXXXXXXX")
-  cp "$binary" "$staged"
-  chmod 755 "$staged"
-  mv -f "$staged" "$install_dir/outfit"
-  printf 'Installed Outfit in %s/outfit\\nAdd that directory to PATH, then run outfit setup.\\n' "$install_dir"
-'''
+ action=(Path(__file__).parent/'templates/install.sh').read_text().replace('@VERSION@',lock['version'])
  if mode=='run':
   args=f"setup --source '{lock['profiles']['url']}' --sha256 '{lock['profiles']['sha256']}'"+(f" --profile '{profile}'" if profile else '')
   action=f'''  # The downloaded program gets terminal input, never the script's pipe.
+  printf '  [3/3] Starting setup with a temporary CLI...\\n' >&2
   unattended=false
   for argument in "$@"; do case "$argument" in --yes|-y|--dry-run) unattended=true ;; esac; done
   if [ "$unattended" = true ]; then
@@ -60,7 +53,9 @@ outfit_bootstrap() {{
   trap 'exit 130' INT
   trap 'exit 143' TERM
   binary="$tmp/outfit"
+  printf '  [1/3] Downloading Outfit {lock['version']} for %s/%s...\\n' "$os" "$arch" >&2
   curl -fsSL --proto '=https' --proto-redir '=https' --retry 2 --connect-timeout 15 --max-time 300 'https://github.com/{lock['repository']}/releases/download/{lock['version']}/outfit_{lock['version']}_'"${{os}}_${{arch}}" -o "$binary"
+  printf '  [2/3] Verifying the download...\\n' >&2
   if command -v sha256sum >/dev/null 2>&1; then
     actual=$(sha256sum "$binary"); actual=${{actual%% *}}
   elif command -v shasum >/dev/null 2>&1; then
@@ -79,24 +74,12 @@ outfit_bootstrap "$@"
 def powershell(lock,mode,profile=''):
  validate(lock)
  checks='\n'.join(f"        '{k.split('_')[1]}' {{ $expected = '{v}' }}" for k,v in sorted(lock['engines'].items()) if k.startswith('windows'))
- action='''    $installDir = if ($env:OUTFIT_INSTALL_DIR) { $env:OUTFIT_INSTALL_DIR } else { Join-Path $env:LOCALAPPDATA 'Outfit/bin' }
-    if ($DryRun) { Write-Host "Would install Outfit in $installDir"; return }
-    [IO.Directory]::CreateDirectory($installDir) | Out-Null
-    $destination = Join-Path $installDir 'outfit.exe'
-    if ((Test-Path $destination) -and ((Get-Item $destination).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Refusing a symlink/reparse point at the Outfit install path.' }
-    $staged = Join-Path $installDir ('.outfit-' + [Guid]::NewGuid().ToString('N') + '.exe')
-    try {
-        Copy-Item -LiteralPath $binary -Destination $staged
-        if ((Get-FileHash -LiteralPath $staged -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected) { throw 'Staged Outfit checksum mismatch' }
-        if (Test-Path $destination) { [IO.File]::Replace($staged, $destination, [NullString]::Value) }
-        else { [IO.File]::Move($staged, $destination) }
-    } finally { if (Test-Path $staged) { Remove-Item -LiteralPath $staged -Force } }
-    Write-Host "Installed Outfit in $destination. Add its directory to PATH, then run outfit setup."
-'''
+ action=(Path(__file__).parent/'templates/install.ps1').read_text().replace('@VERSION@',lock['version'])
  if mode=='run':
   args=['setup','--source',lock['profiles']['url'],'--sha256',lock['profiles']['sha256']]+(['--profile',profile] if profile else [])
   literal=', '.join("'"+a+"'" for a in args)
   action=f'''    $runArgs = @({literal})
+    [Console]::Error.WriteLine('  [3/3] Starting setup with a temporary CLI...')
     if ($Yes) {{ $runArgs += '--yes' }}
     if ($DryRun) {{ $runArgs += '--dry-run' }}
     $runArgs += $OutfitArgs
@@ -116,7 +99,9 @@ $tmp = Join-Path ([IO.Path]::GetTempPath()) ('outfit-' + [Guid]::NewGuid().ToStr
 [IO.Directory]::CreateDirectory($tmp) | Out-Null
 try {{
     $binary = Join-Path $tmp 'outfit.exe'
+    [Console]::Error.WriteLine("  [1/3] Downloading Outfit {lock['version']} for Windows/$arch...")
     Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/{lock['repository']}/releases/download/{lock['version']}/outfit_{lock['version']}_windows_$arch.exe" -OutFile $binary
+    [Console]::Error.WriteLine('  [2/3] Verifying the download...')
     $actual = (Get-FileHash -LiteralPath $binary -Algorithm SHA256).Hash.ToLowerInvariant()
     if ($actual -ne $expected) {{ throw 'Outfit checksum mismatch; nothing was executed.' }}
 {action}}} finally {{
