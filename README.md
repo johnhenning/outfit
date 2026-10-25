@@ -98,7 +98,7 @@ Windows and WSL have separate homes and package managers. Run native PowerShell 
 
 ## Release and verification
 
-`python3 scripts/release.py --version v0.1.0-alpha.1 --profiles ../outfit-profiles` builds six OS/architecture binaries, a deterministic public profile archive, checksums, and self-contained install/run/profile scripts under `dist/site/tools/outfit/`. Config versions can differ from engine versions using `--profiles-version`.
+`python3 scripts/release.py --version v0.1.0-alpha.3 --profiles ../outfit-profiles --profiles-version v0.1.0-alpha.2` builds six OS/architecture binaries, a deterministic public profile archive, checksums, and self-contained install/run/profile scripts under `dist/site/tools/outfit/`. Config versions can differ from engine versions using `--profiles-version`.
 
 ```sh
 go test ./...
