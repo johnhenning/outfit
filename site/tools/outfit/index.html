@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Outfit — equip your machines</title>
-<style>body{font:17px/1.6 system-ui,sans-serif;max-width:780px;margin:70px auto;padding:0 24px;background:#11151b;color:#e1e8ef}h1{font-size:56px;letter-spacing:-3px;margin-bottom:0}p{color:#b7c5d3}a{color:#8dcdf3}pre{background:#1c2530;padding:18px;overflow:auto;border-radius:8px;font-size:14px}h2{margin-top:40px}small{color:#9caebd}</style>
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:780px;margin:70px auto;padding:0 24px;background:#11151b;color:#e1e8ef}h1{font-size:56px;letter-spacing:-3px;margin-bottom:0}p{color:#b7c5d3}a{color:#8dcdf3}pre{background:#1c2530;padding:18px;overflow:auto;border-radius:8px;font-size:14px}h2{margin-top:40px}small{color:#9caebd}
+.code-block{position:relative;margin:1em 0;background:#1c2530;border-radius:8px;padding-top:38px}
+.code-block pre{margin:0;padding-top:8px}
+.copy-button{position:absolute;top:8px;right:8px;min-height:30px;padding:3px 10px;border:1px solid #526376;border-radius:5px;background:#263342;color:#e1e8ef;font:12px/1.5 system-ui,sans-serif;cursor:pointer}
+.copy-button:hover{background:#35485c}
+.copy-button:focus-visible{outline:2px solid #8dcdf3;outline-offset:3px}
+.copy-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+</style>
 <h1>outfit</h1><p>Equip a workstation, development environment, compute node, or media node from reusable profiles.</p>
 <small>First alpha · Preview changes before applying · Keep credentials in 1Password</small>
 <h2>Install the CLI</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/install.sh | sh</pre>
@@ -16,4 +23,42 @@ irm https://johnhenning.dev/tools/outfit/profiles/workstation.ps1 | iex</pre>
 outfit doctor</pre>
 <p><a href="https://github.com/johnhenning/outfit">CLI source &amp; documentation</a> · <a href="https://github.com/johnhenning/outfit-profiles">Public profile templates</a> · <a href="install.sh">Inspect installer</a></p>
 <p><small>This alpha reports manual installers and configuration steps. GPU drivers, media storage/services, and WSL provisioning need explicit setup. Cross-platform builds do not imply every fresh-machine install has been verified.</small></p>
+<script>
+document.querySelectorAll('pre').forEach((block, index) => {
+  const text = block.textContent;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'code-block';
+  block.before(wrapper);
+  wrapper.append(block);
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'copy-button';
+  button.textContent = 'Copy';
+  button.setAttribute('aria-label', `Copy code block ${index + 1}`);
+  const status = document.createElement('span');
+  status.className = 'copy-status';
+  status.setAttribute('role', 'status');
+  wrapper.append(button, status);
+  let reset;
+  button.addEventListener('click', async () => {
+    clearTimeout(reset);
+    button.disabled = true;
+    status.textContent = '';
+    try {
+      await navigator.clipboard.writeText(text);
+      button.textContent = 'Copied!';
+      status.textContent = 'Code copied to clipboard.';
+    } catch {
+      button.textContent = 'Try again';
+      status.textContent = 'Could not copy. Select the code and copy it manually.';
+    } finally {
+      button.disabled = false;
+      reset = setTimeout(() => {
+        button.textContent = 'Copy';
+        status.textContent = '';
+      }, 2500);
+    }
+  });
+});
+</script>
 </html>
