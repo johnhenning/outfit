@@ -1,6 +1,6 @@
 # Hosting johnhenning.dev/tools/outfit/
 
-The bootstrap site is generated from a release lock and deployed by GitHub Pages from a published Outfit release. The public Pages origin is `https://johnhenning.github.io/outfit/`.
+The bootstrap site is generated from a release lock and deployed by GitHub Pages from a published Outfit release. The deployment overlays the current landing page from `site/tools/outfit/index.html`, so documentation updates can be deployed against an existing release without rebuilding its installers. The public Pages origin is `https://johnhenning.github.io/outfit/`.
 
 A small Cloudflare Worker routes only `/tools/outfit/` requests on johnhenning.dev to the matching Pages path. It rejects non-GET/HEAD requests and strips credentials/cookies before fetching public assets. Its route can be extended later for other tools or replaced when the main personal website is deployed. Root content is not provided by this tool.
 

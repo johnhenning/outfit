@@ -21,6 +21,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
       - name: Download the exact published site
         env:
           GH_TOKEN: ${{ github.token }}
@@ -29,11 +30,13 @@ jobs:
         run: |
           gh release download "$RELEASE_VERSION" --pattern outfit-site.tar.gz --pattern SHA256SUMS
           grep '  outfit-site.tar.gz$' SHA256SUMS | sha256sum -c -
-          mkdir site
-          tar -xzf outfit-site.tar.gz -C site
+          mkdir published-site
+          tar -xzf outfit-site.tar.gz -C published-site
+      - name: Overlay current documentation
+        run: cp site/tools/outfit/index.html published-site/tools/outfit/index.html
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: published-site
       - uses: actions/deploy-pages@v4
         id: deployment
