@@ -31,7 +31,7 @@ def shell(lock,mode,profile=''):
   args=f"setup --source '{lock['profiles']['url']}' --sha256 '{lock['profiles']['sha256']}'"+(f" --profile '{profile}'" if profile else '')
   action=f'''  # The downloaded program gets terminal input, never the script's pipe.
   unattended=false
-  for argument in "$@"; do [ "$argument" != --yes ] && [ "$argument" != -y ] || unattended=true; done
+  for argument in "$@"; do case "$argument" in --yes|-y|--dry-run) unattended=true ;; esac; done
   if [ "$unattended" = true ]; then
     "$binary" {args} "$@"
   elif [ -t 0 ]; then
@@ -80,6 +80,7 @@ def powershell(lock,mode,profile=''):
  validate(lock)
  checks='\n'.join(f"        '{k.split('_')[1]}' {{ $expected = '{v}' }}" for k,v in sorted(lock['engines'].items()) if k.startswith('windows'))
  action='''    $installDir = if ($env:OUTFIT_INSTALL_DIR) { $env:OUTFIT_INSTALL_DIR } else { Join-Path $env:LOCALAPPDATA 'Outfit/bin' }
+    if ($DryRun) { Write-Host "Would install Outfit in $installDir"; return }
     [IO.Directory]::CreateDirectory($installDir) | Out-Null
     $destination = Join-Path $installDir 'outfit.exe'
     if ((Test-Path $destination) -and ((Get-Item $destination).Attributes -band [IO.FileAttributes]::ReparsePoint)) { throw 'Refusing a symlink/reparse point at the Outfit install path.' }
@@ -97,13 +98,14 @@ def powershell(lock,mode,profile=''):
   literal=', '.join("'"+a+"'" for a in args)
   action=f'''    $runArgs = @({literal})
     if ($Yes) {{ $runArgs += '--yes' }}
+    if ($DryRun) {{ $runArgs += '--dry-run' }}
     $runArgs += $OutfitArgs
     & $binary @runArgs
     if ($LASTEXITCODE -ne 0) {{ throw "Outfit exited with code $LASTEXITCODE" }}
 '''
  return f'''# Outfit {lock['version']}: generated, checksum-verified bootstrap.
 & {{
-param([switch]$Yes, [Parameter(ValueFromRemainingArguments=$true)][string[]]$OutfitArgs)
+param([switch]$Yes, [switch]$DryRun, [Parameter(ValueFromRemainingArguments=$true)][string[]]$OutfitArgs)
 $ErrorActionPreference = 'Stop'
 $arch = switch ([Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()) {{ 'x64' {{ 'amd64' }} 'arm64' {{ 'arm64' }} default {{ throw 'Unsupported Windows architecture' }} }}
 switch ($arch) {{

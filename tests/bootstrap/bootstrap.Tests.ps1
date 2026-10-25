@@ -39,6 +39,10 @@ Describe 'Outfit Windows bootstrap' {
         (Get-FileHash $destination).Hash | Should -Be (Get-FileHash $binaryFixture).Hash
         @(Get-ChildItem $env:OUTFIT_INSTALL_DIR -Filter '.outfit-*' -Force).Count | Should -Be 0
     }
+    It 'dry run never writes an install directory' {
+        & $installScript -DryRun
+        Test-Path $env:OUTFIT_INSTALL_DIR | Should -BeFalse
+    }
     It 'all generated scripts parse as PowerShell' {
         Get-ChildItem $fixture -Filter '*.ps1' -Recurse | ForEach-Object {
             $tokens = $null; $parseErrors = $null
