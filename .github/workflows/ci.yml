@@ -1,5 +1,8 @@
 name: Outfit checks
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request: {}
 permissions:
   contents: read
 concurrency:
@@ -24,6 +27,7 @@ jobs:
           python-version: '3.12'
       - run: python3 -m unittest discover -s tests/bootstrap -v
         if: runner.os != 'Windows'
+      - run: python -m unittest discover -s tests/release -v
       - run: python scripts/test_bootstrap_fixtures.py
       - name: PowerShell bootstrap tests
         shell: pwsh

@@ -15,3 +15,10 @@ Plan: docs/superpowers/plans/2026-10-25-outfit.md
 - Task 8: TUI role/profile/software category menus and plain review added; event tests pass.
 - Task 9: self-contained shell/PowerShell generators and release builder added; five shell bootstrap tests prove temporary execution, install-only, checksum/download failures and truncation behavior.
 - User revision: public outfit runtime + public outfit-profiles templates + private outfit-personal overlay; authentication is deferred until private config/secrets are requested.
+
+- Independent review: five Important findings fixed with regressions: canonical private-key path rejection, scrollable complete plan review, effective inherited-package checkbox state, Windows WinGet tool discovery after installs, and atomic PowerShell replacement. Go suite and bootstrap suites passed after the fixes. No deferred minor findings.
+- Native CI verified green on Linux, macOS and Windows; public/private data validation green.
+- Interactive PTY smoke: profile selection, Advanced categories and inherited checkboxes rendered correctly; cancelling exited without creating machine state.
+- Local container daemons unavailable; a disposable Ubuntu container install/rerun/dotfile smoke workflow is running on GitHub instead.
+- Organization creation/transfers explicitly deferred by the user. Keep all repositories under johnhenning.
+- Automatic approval rejected the initial whole-host Worker custom domain. Resolved by deploying only the /tools/outfit/* path route; no whole-host Worker is attached.

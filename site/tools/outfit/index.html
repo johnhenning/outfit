@@ -4,6 +4,7 @@
 <h1>outfit</h1><p>Equip a workstation, development environment, compute node, or media node from reusable profiles.</p>
 <small>First alpha · Preview changes before applying · Keep credentials in 1Password</small>
 <h2>Install the CLI</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/install.sh | sh</pre>
+<h2>Preview first</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/workstation.sh | sh -s -- --dry-run</pre>
 <h2>Run without installing Outfit</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/run.sh | sh</pre>
 <p>Or start from a known profile:</p><pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/compute.sh | sh</pre>
 <p>Profiles: <a href="profiles/workstation.sh">workstation</a>, <a href="profiles/dev.sh">development</a>, <a href="profiles/compute.sh">compute</a>, <a href="profiles/media.sh">media</a>. Each uses a temporary CLI and opens setup for review. Advanced options let you choose software alternatives.</p>

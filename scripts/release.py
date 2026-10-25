@@ -16,6 +16,9 @@ def bundle(root,destination):
  with destination.open('wb') as target:
   with gzip.GzipFile(fileobj=target,mode='wb',mtime=0,filename='') as compressed:compressed.write(stream.getvalue())
  return hashlib.sha256(destination.read_bytes()).hexdigest()
+def write_checksums(root,version):
+ files=sorted(p for p in root.iterdir() if p.is_file() and (p.name.startswith('outfit_'+version+'_') or p.name in ['release-lock.json','outfit-site.tar.gz']))
+ (root/'SHA256SUMS').write_text(''.join(hashlib.sha256(p.read_bytes()).hexdigest()+'  '+p.name+'\n' for p in files))
 def main():
  p=argparse.ArgumentParser();p.add_argument('--version',required=True);p.add_argument('--profiles',type=Path,required=True);p.add_argument('--profiles-version');p.add_argument('--go',default='go');p.add_argument('--output',type=Path,default=ROOT/'dist');a=p.parse_args();a.output.mkdir(parents=True,exist_ok=True);pv=a.profiles_version or a.version;archive=a.output/f'outfit-profiles_{pv}.tar.gz';sha=bundle(a.profiles.resolve(),archive)
  url=f'https://github.com/johnhenning/outfit-profiles/releases/download/{pv}/{archive.name}'
@@ -24,8 +27,10 @@ def main():
   for arch in ['amd64','arm64']:
    name=f'outfit_{a.version}_{system}_{arch}'+('.exe' if system=='windows' else '');asset=a.output/name;env=os.environ.copy();env.update(GOOS=system,GOARCH=arch,CGO_ENABLED='0');flags=f'-s -w -X main.version={a.version} -X github.com/johnhenning/outfit/internal/cli.DefaultSource={url} -X github.com/johnhenning/outfit/internal/cli.DefaultSHA256={sha}'
    subprocess.run([a.go,'build','-trimpath','-ldflags',flags,'-o',str(asset.resolve()),'./cmd/outfit'],cwd=ROOT,env=env,check=True);lock['engines'][f'{system}_{arch}']=hashlib.sha256(asset.read_bytes()).hexdigest();print('built',name,flush=True)
- (a.output/'release-lock.json').write_text(json.dumps(lock,indent=2)+'\n');generate(lock,a.output/'site/tools/outfit');generate(lock,a.output/'site/tools/outfit/v1');(a.output/'SHA256SUMS').write_text(''.join(hashlib.sha256(f.read_bytes()).hexdigest()+'  '+f.name+'\n' for f in sorted(a.output.iterdir()) if f.is_file() and f.name!='SHA256SUMS'))
+ (a.output/'release-lock.json').write_text(json.dumps(lock,indent=2)+'\n');generate(lock,a.output/'site/tools/outfit');generate(lock,a.output/'site/tools/outfit/v1')
  source=ROOT/'site/tools/outfit/index.html'
  if source.exists():(a.output/'site/tools/outfit/index.html').write_bytes(source.read_bytes())
+ bundle(a.output/'site', a.output/'outfit-site.tar.gz')
+ write_checksums(a.output,a.version)
  print('Release lock and bootstrap endpoints written to',a.output)
 if __name__=='__main__':main()

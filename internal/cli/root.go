@@ -263,6 +263,7 @@ func New(version string) *cobra.Command {
 	}}
 	ac.Flags().StringVar(&planFile, "plan", "", "Saved plan JSON")
 	cmd.AddCommand(ac)
+	var dryRun bool
 	sc := &cobra.Command{Use: "setup", Short: "Choose a profile, review changes and equip this machine", Args: cobra.NoArgs, RunE: func(c *cobra.Command, _ []string) error {
 		cat, clean, err := o.load(c.Context())
 		if err != nil {
@@ -276,6 +277,17 @@ func New(version string) *cobra.Command {
 		cfg, err := o.selection()
 		if err != nil {
 			return err
+		}
+		if dryRun {
+			p, err := plan.Resolve(cat, target, cfg)
+			if err != nil {
+				return err
+			}
+			if o.json {
+				return encode(c.OutOrStdout(), p)
+			}
+			printPlan(c.OutOrStdout(), p, cat)
+			return nil
 		}
 		approved := o.yes
 		if !o.yes && !o.plain && term.IsTerminal(int(os.Stdin.Fd())) {
@@ -305,6 +317,7 @@ func New(version string) *cobra.Command {
 		}
 		return applyPackages(c, o, cat, p)
 	}}
+	sc.Flags().BoolVar(&dryRun, "dry-run", false, "Print the resolved plan without changes or prompts")
 	cmd.AddCommand(sc)
 	cmd.AddCommand(&cobra.Command{Use: "catalog", Short: "List available profiles and software", Args: cobra.NoArgs, RunE: func(c *cobra.Command, _ []string) error {
 		cat, clean, err := o.load(c.Context())

@@ -19,6 +19,8 @@ class BootstrapTests(unittest.TestCase):
   self.env['TEST_DOWNLOAD_FAIL']='yes';r=self.run_script();self.assertNotEqual(r.returncode,0);self.assertFalse((self.d/'capture').exists())
  def test_install_only_does_not_run_setup(self):
   r=self.run_script('install','');self.assertEqual(r.returncode,0,r.stderr);self.assertTrue((self.d/'installed/outfit').exists());self.assertFalse((self.d/'capture').exists())
+ def test_preview_needs_no_terminal(self):
+  script=self.d/'preview.sh';script.write_text(self.gen.shell(self.lock,'run','compute'));r=subprocess.run(['/bin/sh',str(script),'--dry-run'],env=self.env,text=True,capture_output=True,stdin=subprocess.DEVNULL);self.assertEqual(r.returncode,0,r.stderr);self.assertEqual((self.d/'capture').read_text().splitlines()[-1],'--dry-run')
  def test_truncated_script_cannot_execute(self):
   body=self.gen.shell(self.lock,'run','compute');script=self.d/'partial.sh';script.write_text(body[:len(body)//2]);r=subprocess.run(['/bin/sh',str(script),'--yes'],env=self.env,capture_output=True);self.assertNotEqual(r.returncode,0);self.assertFalse((self.d/'capture').exists())
 if __name__=='__main__':unittest.main()

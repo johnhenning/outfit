@@ -15,6 +15,9 @@ curl -fsSL https://johnhenning.dev/tools/outfit/install.sh | sh
 # Run the interactive wizard using a temporary CLI.
 curl -fsSL https://johnhenning.dev/tools/outfit/run.sh | sh
 
+# Preview a known profile without changing your machine.
+curl -fsSL https://johnhenning.dev/tools/outfit/profiles/workstation.sh | sh -s -- --dry-run
+
 # Start from a known profile; no prior Outfit, Python, Go or Git installation.
 curl -fsSL https://johnhenning.dev/tools/outfit/profiles/compute.sh | sh
 ```
