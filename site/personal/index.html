@@ -1,11 +1,15 @@
 <!doctype html>
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>John’s personal Outfit profiles</title>
 <style>body{font:17px/1.6 system-ui,sans-serif;max-width:780px;margin:70px auto;padding:0 24px;background:#11151b;color:#e1e8ef}h1{font-size:56px;letter-spacing:-3px;margin-bottom:0}p{color:#b7c5d3}a{color:#8dcdf3}pre{background:#1c2530;padding:18px;overflow:auto;border-radius:8px;font-size:14px}h2{margin-top:40px}small{color:#9caebd}
-.code-block{position:relative;margin:1em 0;background:#1c2530;border-radius:8px;padding-top:38px}
-.code-block pre{margin:0;padding-top:8px}
-.copy-button{position:absolute;top:8px;right:8px;min-height:30px;padding:3px 10px;border:1px solid #526376;border-radius:5px;background:#263342;color:#e1e8ef;font:12px/1.5 system-ui,sans-serif;cursor:pointer}
-.copy-button:hover{background:#35485c}
-.copy-button:focus-visible{outline:2px solid #8dcdf3;outline-offset:3px}
+.code-block{position:relative;margin:1em 0;background:#1c2530;border-radius:8px}
+.code-block pre{margin:0;padding:18px}
+.copy-button{position:absolute;top:8px;right:8px;width:32px;height:32px;display:grid;place-items:center;padding:6px;border:0;border-radius:5px;background:rgba(28,37,48,.65);color:#e1e8ef;opacity:.3;cursor:pointer;transition:opacity .15s,background .15s}
+.copy-button svg{width:18px;height:18px;display:block;pointer-events:none}
+.copy-button:hover,.copy-button:focus-visible{opacity:1;background:rgba(53,72,92,.95)}
+.copy-button:focus-visible{outline:2px solid #8dcdf3;outline-offset:2px}
+.copy-button[data-state="copied"]{color:#9be0b0;opacity:1}
+.copy-button[data-state="error"]{color:#f2c879;opacity:1}
+@media (prefers-reduced-motion:reduce){.copy-button{transition:none}}
 .copy-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 </style>
 <h1>John’s outfit</h1>
@@ -38,8 +42,19 @@ document.querySelectorAll('pre').forEach((block, index) => {
   const button = document.createElement('button');
   button.type = 'button';
   button.className = 'copy-button';
-  button.textContent = 'Copy';
-  button.setAttribute('aria-label', `Copy code block ${index + 1}`);
+  const icons = {
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="8" height="4" rx="1"/><path d="M8 5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/></svg>',
+    copied: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v9M12 18v1"/></svg>'
+  };
+  const setState = (state) => {
+    button.innerHTML = icons[state];
+    button.dataset.state = state;
+    const label = state === 'copied' ? 'Copied!' : state === 'error' ? 'Try copying again' : 'Copy code';
+    button.title = label;
+    button.setAttribute('aria-label', `${label} — block ${index + 1}`);
+  };
+  setState('copy');
   const status = document.createElement('span');
   status.className = 'copy-status';
   status.setAttribute('role', 'status');
@@ -51,15 +66,15 @@ document.querySelectorAll('pre').forEach((block, index) => {
     status.textContent = '';
     try {
       await navigator.clipboard.writeText(text);
-      button.textContent = 'Copied!';
+      setState('copied');
       status.textContent = 'Code copied to clipboard.';
     } catch {
-      button.textContent = 'Try again';
+      setState('error');
       status.textContent = 'Could not copy. Select the code and copy it manually.';
     } finally {
       button.disabled = false;
       reset = setTimeout(() => {
-        button.textContent = 'Copy';
+        setState('copy');
         status.textContent = '';
       }, 2500);
     }

@@ -19,6 +19,34 @@ class BootstrapTests(unittest.TestCase):
   self.env['TEST_DOWNLOAD_FAIL']='yes';r=self.run_script();self.assertNotEqual(r.returncode,0);self.assertFalse((self.d/'capture').exists())
  def test_install_only_does_not_run_setup(self):
   r=self.run_script('install','');self.assertEqual(r.returncode,0,r.stderr);self.assertTrue((self.d/'installed/outfit').exists());self.assertFalse((self.d/'capture').exists())
+ def test_install_reports_verified_success_and_zsh_next_steps(self):
+  self.env['SHELL']='/bin/zsh';self.env['ZDOTDIR']=str(self.d/'zsh settings')
+  r=self.run_script('install','');self.assertEqual(r.returncode,0,r.stderr)
+  self.assertIn('installed successfully',r.stdout)
+  self.assertIn('v0.1.0',r.stdout)
+  self.assertIn('outfit version',r.stdout);self.assertIn('outfit setup',r.stdout);self.assertIn('outfit doctor',r.stdout)
+  self.assertIn(str(self.d/'zsh settings/.zshrc'),r.stdout)
+  self.assertIn('Downloading',r.stderr);self.assertIn('Verifying',r.stderr)
+  self.assertNotIn('\x1b',r.stdout+r.stderr)
+  self.assertFalse((self.d/'zsh settings').exists())
+ def test_printed_path_command_handles_spaces_and_apostrophes(self):
+  self.env['SHELL']='/bin/bash';self.env['OUTFIT_INSTALL_DIR']=str(self.d/"John's tools")
+  r=self.run_script('install','');self.assertEqual(r.returncode,0,r.stderr)
+  command=next(line.strip() for line in r.stdout.splitlines() if line.strip().startswith('export PATH='))
+  resolved=subprocess.check_output(['/bin/sh','-c',command+'; command -v outfit'],env=self.env,text=True).strip()
+  self.assertEqual(Path(resolved).resolve(),(self.d/"John's tools/outfit").resolve())
+ def test_existing_path_does_not_request_shell_edits(self):
+  self.env['PATH']=self.env['OUTFIT_INSTALL_DIR']+':'+self.env['PATH']
+  r=self.run_script('install','');self.assertEqual(r.returncode,0,r.stderr)
+  self.assertIn('PATH is ready',r.stdout);self.assertNotIn('export PATH=',r.stdout)
+ def test_fish_gets_fish_path_instructions(self):
+  self.env['SHELL']='/opt/homebrew/bin/fish'
+  r=self.run_script('install','');self.assertEqual(r.returncode,0,r.stderr)
+  self.assertIn('fish_add_path --move',r.stdout);self.assertNotIn('export PATH=',r.stdout)
+ def test_failed_download_does_not_report_success(self):
+  self.env['TEST_DOWNLOAD_FAIL']='yes'
+  r=self.run_script('install','');self.assertNotEqual(r.returncode,0)
+  self.assertNotIn('installed successfully',r.stdout+r.stderr)
  def test_preview_needs_no_terminal(self):
   script=self.d/'preview.sh';script.write_text(self.gen.shell(self.lock,'run','compute'));r=subprocess.run(['/bin/sh',str(script),'--dry-run'],env=self.env,text=True,capture_output=True,stdin=subprocess.DEVNULL);self.assertEqual(r.returncode,0,r.stderr);self.assertEqual((self.d/'capture').read_text().splitlines()[-1],'--dry-run')
  def test_truncated_script_cannot_execute(self):

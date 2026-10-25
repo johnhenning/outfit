@@ -29,6 +29,14 @@ irm https://getoutfit.dev/install.ps1 | iex
 irm https://getoutfit.dev/profiles/workstation.ps1 | iex
 ```
 
+The CLI installer reports download, verification and installation progress, then
+shows the installed version/path and the next commands. If Outfit is not already
+reachable on PATH, it prints copyable instructions for zsh, bash, fish or
+PowerShell, including how to keep the setting for future terminals. It does not
+edit shell startup files or your Windows user PATH automatically. Color is used
+only for interactive success output and respects `NO_COLOR`; progress goes to
+stderr so profile previews can still emit clean JSON.
+
 Known-profile scripts pin the CLI and config bundle independently, verify downloads, and open a review before applying. Unix unattended invocation is `curl .../compute.sh | sh -s -- --yes`. Inspect the script and profile before using unattended mode. Download first and run the local file if you prefer reviewing it before execution. Checksums alongside release assets provide integrity checks; they do not independently establish publisher authenticity.
 
 ## Development and local use
