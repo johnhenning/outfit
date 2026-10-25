@@ -1,0 +1,46 @@
+name: Disposable Linux install smoke
+on:
+  workflow_dispatch:
+  push:
+    paths: ['internal/**', 'cmd/**', 'tests/fixtures/smoke-profile/**', '.github/workflows/smoke.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: CGO_ENABLED=0 go build -o build/outfit ./cmd/outfit
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-smoke-binary
+          path: build/outfit
+  install:
+    needs: build
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    steps:
+      - name: Prepare disposable container
+        run: apt-get update && apt-get install -y ca-certificates sudo
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: linux-smoke-binary
+          path: build
+      - name: Install, rerun and apply synthetic config
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x build/outfit
+          mkdir -p /tmp/outfit-smoke-home
+          build/outfit plan --source tests/fixtures/smoke-profile --profile smoke --output /tmp/outfit-smoke-plan.json
+          build/outfit apply --source tests/fixtures/smoke-profile --plan /tmp/outfit-smoke-plan.json --state-dir /tmp/outfit-smoke-state --yes --json > /tmp/first.json
+          jq -e '.[] | select(.action_id=="pkg:jq" and .status=="installed")' /tmp/first.json
+          build/outfit apply --source tests/fixtures/smoke-profile --plan /tmp/outfit-smoke-plan.json --state-dir /tmp/outfit-smoke-state --yes --json > /tmp/second.json
+          jq -e '.[] | select(.action_id=="pkg:jq" and .status=="already-present")' /tmp/second.json
+          build/outfit dotfiles --source tests/fixtures/smoke-profile --profile smoke --home /tmp/outfit-smoke-home --state-dir /tmp/outfit-smoke-state --apply --yes
+          cmp tests/fixtures/smoke-profile/settings.txt /tmp/outfit-smoke-home/.config/outfit-smoke/settings.txt
+          build/outfit dotfiles --source tests/fixtures/smoke-profile --profile smoke --home /tmp/outfit-smoke-home --state-dir /tmp/outfit-smoke-state --apply --yes

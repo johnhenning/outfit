@@ -1,0 +1,1 @@
+This file is a synthetic fixture used only in a disposable CI container.

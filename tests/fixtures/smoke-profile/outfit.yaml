@@ -1,0 +1,16 @@
+schema: 1
+name: Disposable CI smoke profile
+packages:
+  - id: jq
+    name: jq
+    category: cli
+    installs:
+      debian: {provider: apt, package: jq}
+roles:
+  smoke: {packages: [jq], dotfiles: [smoke-config]}
+profiles:
+  smoke: {role: smoke}
+dotfiles:
+  - id: smoke-config
+    source: settings.txt
+    target: .config/outfit-smoke/settings.txt
