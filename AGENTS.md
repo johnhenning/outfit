@@ -16,7 +16,7 @@
 
 ## Development checks
 - Go 1.26+; run gofmt on changed Go files.
-- Run `go test ./...`, `go vet ./...`, and `python3 -m unittest discover -s tests/bootstrap -v`.
+- Run `go test ./...`, `go vet ./...`, `python3 -m unittest discover -s tests/bootstrap -v`, and `python3 -m unittest discover -s tests/release -v`.
 - Windows bootstrap tests: `Invoke-Pester ./tests/bootstrap/bootstrap.Tests.ps1 -CI` in PowerShell with Pester 5+.
 - Before a behavior fix, add a regression test that demonstrates the failing contract. Test user-visible behavior, not source-text fragments.
 - Validate public and personal profile combinations with catalog/plan commands; do not call apply in profile CI.

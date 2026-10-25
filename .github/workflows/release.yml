@@ -65,9 +65,6 @@ jobs:
           mkdir published
           gh release download "$PROFILE_VERSION" --repo johnhenning/outfit-profiles --pattern "outfit-profiles_${PROFILE_VERSION}.tar.gz" --dir published
           cmp "published/outfit-profiles_${PROFILE_VERSION}.tar.gz" "dist/outfit-profiles_${PROFILE_VERSION}.tar.gz"
-      - name: Package generated site
-        working-directory: outfit
-        run: tar -czf dist/outfit-site.tar.gz -C dist/site .
       - uses: actions/attest-build-provenance@v2
         with:
           subject-path: |

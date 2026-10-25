@@ -27,7 +27,8 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_VERSION: ${{ inputs.version || github.event.release.tag_name }}
         run: |
-          gh release download "$RELEASE_VERSION" --pattern outfit-site.tar.gz
+          gh release download "$RELEASE_VERSION" --pattern outfit-site.tar.gz --pattern SHA256SUMS
+          grep '  outfit-site.tar.gz$' SHA256SUMS | sha256sum -c -
           mkdir site
           tar -xzf outfit-site.tar.gz -C site
       - uses: actions/configure-pages@v5
