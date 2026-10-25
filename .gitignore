@@ -1,0 +1,8 @@
+bin/
+dist/
+.cache/
+.tools/
+.superpowers/
+*.test
+__pycache__/
+tests/fixtures/bootstrap/

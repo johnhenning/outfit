@@ -1,0 +1,20 @@
+{
+  "uv": {
+    "url": "https://github.com/astral-sh/uv/releases/download/0.13.5/uv-installer.sh",
+    "sha256": "1c6e7f025499664633ac2dce43a210800510e9ef0625c52e034a8afdf8bf177a",
+    "version": "0.13.5",
+    "interpreter": "sh"
+  },
+  "brew": {
+    "url": "https://raw.githubusercontent.com/Homebrew/install/85d1a3fc80d8a63932f632aca8f787de11d14a64/install.sh",
+    "sha256": "5f333bbe53bc490e51e7ccb1df8779b3dd6ee73a1a7379efda216edb08ccb148",
+    "version": "85d1a3fc80d8a63932f632aca8f787de11d14a64",
+    "interpreter": "bash"
+  },
+  "rust": {
+    "url": "https://raw.githubusercontent.com/rust-lang/rustup/ce2c96b063a3aa9bfde32a9f03fc303c830033fc/rustup-init.sh",
+    "sha256": "b29d1c46eb82164b68c9ee7aea8a2d4fa4d4f648a13721eefa8c77327aac2f27",
+    "version": "ce2c96b063a3aa9bfde32a9f03fc303c830033fc",
+    "interpreter": "sh"
+  }
+}

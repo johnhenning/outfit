@@ -1,0 +1,8 @@
+{
+  "name": "outfit-tools",
+  "account_id": "404dbf11482c2c37e173fabe424aa664",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-10-25",
+  "workers_dev": true,
+  "routes": [{"pattern": "johnhenning.dev", "custom_domain": true}]
+}

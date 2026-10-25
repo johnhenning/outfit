@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Outfit — equip your machines</title>
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:780px;margin:70px auto;padding:0 24px;background:#11151b;color:#e1e8ef}h1{font-size:56px;letter-spacing:-3px;margin-bottom:0}p{color:#b7c5d3}a{color:#8dcdf3}pre{background:#1c2530;padding:18px;overflow:auto;border-radius:8px;font-size:14px}h2{margin-top:40px}small{color:#9caebd}</style>
+<h1>outfit</h1><p>Equip a workstation, development environment, compute node, or media node from reusable profiles.</p>
+<small>First alpha · Preview changes before applying · Keep credentials in 1Password</small>
+<h2>Install the CLI</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/install.sh | sh</pre>
+<h2>Run without installing Outfit</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/run.sh | sh</pre>
+<p>Or start from a known profile:</p><pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/compute.sh | sh</pre>
+<p>Profiles: <a href="profiles/workstation.sh">workstation</a>, <a href="profiles/dev.sh">development</a>, <a href="profiles/compute.sh">compute</a>, <a href="profiles/media.sh">media</a>. Each uses a temporary CLI and opens setup for review. Advanced options let you choose software alternatives.</p>
+<h2>Windows and WSL</h2><pre>irm https://johnhenning.dev/tools/outfit/install.ps1 | iex
+irm https://johnhenning.dev/tools/outfit/profiles/workstation.ps1 | iex</pre>
+<p>Run the Unix commands inside your chosen WSL distribution for Linux development tools.</p>
+<h2>Make it yours</h2><p>Start from public templates. Fetch your private profile overlay after signing in to GitHub. Authorize 1Password when you need credentials; private keys and tokens stay out of the profile repos.</p>
+<pre>outfit personalize --repo johnhenning/outfit-personal
+outfit doctor</pre>
+<p><a href="https://github.com/johnhenning/outfit">CLI source &amp; documentation</a> · <a href="https://github.com/johnhenning/outfit-profiles">Public profile templates</a> · <a href="install.sh">Inspect installer</a></p>
+<p><small>This alpha reports manual installers and configuration steps. GPU drivers, media storage/services, and WSL provisioning need explicit setup. Cross-platform builds do not imply every fresh-machine install has been verified.</small></p>
+</html>
