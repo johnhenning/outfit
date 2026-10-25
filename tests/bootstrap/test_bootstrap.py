@@ -23,4 +23,12 @@ class BootstrapTests(unittest.TestCase):
   script=self.d/'preview.sh';script.write_text(self.gen.shell(self.lock,'run','compute'));r=subprocess.run(['/bin/sh',str(script),'--dry-run'],env=self.env,text=True,capture_output=True,stdin=subprocess.DEVNULL);self.assertEqual(r.returncode,0,r.stderr);self.assertEqual((self.d/'capture').read_text().splitlines()[-1],'--dry-run')
  def test_truncated_script_cannot_execute(self):
   body=self.gen.shell(self.lock,'run','compute');script=self.d/'partial.sh';script.write_text(body[:len(body)//2]);r=subprocess.run(['/bin/sh',str(script),'--yes'],env=self.env,capture_output=True);self.assertNotEqual(r.returncode,0);self.assertFalse((self.d/'capture').exists())
+ def test_personal_site_runs_an_explicit_default_profile(self):
+  self.gen.generate(self.lock,self.d/'site',profiles=['john-mac-everyday','john-mac-dev'],default_profile='john-mac-everyday')
+  r=subprocess.run(['/bin/sh',str(self.d/'site/run.sh'),'--dry-run'],env=self.env,text=True,capture_output=True)
+  self.assertEqual(r.returncode,0,r.stderr)
+  args=(self.d/'capture').read_text().splitlines()
+  self.assertEqual(args[args.index('--profile')+1],'john-mac-everyday')
+  self.assertTrue((self.d/'site/profiles/john-mac-dev.ps1').exists())
+  self.assertFalse((self.d/'site/profiles/workstation.sh').exists())
 if __name__=='__main__':unittest.main()

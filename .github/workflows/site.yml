@@ -7,6 +7,10 @@ on:
       version:
         description: Published engine release tag
         required: true
+      personal_version:
+        description: Published nonsecret personal bundle release
+        default: v0.1.0-alpha.2
+        required: true
 permissions:
   contents: read
   pages: write
@@ -34,6 +38,18 @@ jobs:
           tar -xzf outfit-site.tar.gz -C published-site
       - name: Overlay current documentation
         run: cp site/tools/outfit/index.html published-site/tools/outfit/index.html
+      - name: Generate pinned personal endpoints
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PERSONAL_VERSION: ${{ inputs.personal_version || 'v0.1.0-alpha.2' }}
+          RELEASE_VERSION: ${{ inputs.version || github.event.release.tag_name }}
+        run: |
+          gh release download "$RELEASE_VERSION" --pattern release-lock.json
+          grep '  release-lock.json$' SHA256SUMS | sha256sum -c -
+          mkdir personal-release
+          gh release download "$PERSONAL_VERSION" --repo johnhenning/outfit-personal --pattern "outfit-personal_${PERSONAL_VERSION}.tar.gz" --pattern SHA256SUMS --dir personal-release
+          (cd personal-release && sha256sum -c SHA256SUMS)
+          python3 scripts/generate_personal_site.py release-lock.json personal-release "$PERSONAL_VERSION" published-site/personal
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

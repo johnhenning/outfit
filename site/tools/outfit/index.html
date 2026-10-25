@@ -9,18 +9,17 @@
 .copy-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 </style>
 <h1>outfit</h1><p>Equip a workstation, development environment, compute node, or media node from reusable profiles.</p>
-<small>First alpha · Preview changes before applying · Keep credentials in 1Password</small>
-<h2>Install the CLI</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/install.sh | sh</pre>
-<h2>Preview first</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/workstation.sh | sh -s -- --dry-run</pre>
-<h2>Run without installing Outfit</h2><pre>curl -fsSL https://johnhenning.dev/tools/outfit/run.sh | sh</pre>
-<p>Or start from a known profile:</p><pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/compute.sh | sh</pre>
+<small>First alpha · Preview changes before applying · Keep credentials in your credential manager</small>
+<h2>Install the CLI</h2><pre>curl -fsSL https://getoutfit.dev/install.sh | sh</pre>
+<h2>Preview first</h2><pre>curl -fsSL https://getoutfit.dev/profiles/workstation.sh | sh -s -- --dry-run</pre>
+<h2>Run without installing Outfit</h2><pre>curl -fsSL https://getoutfit.dev/run.sh | sh</pre>
+<p>Or start from a known profile:</p><pre>curl -fsSL https://getoutfit.dev/profiles/compute.sh | sh</pre>
 <p>Profiles: <a href="profiles/workstation.sh">workstation</a>, <a href="profiles/dev.sh">development</a>, <a href="profiles/compute.sh">compute</a>, <a href="profiles/media.sh">media</a>. Each uses a temporary CLI and opens setup for review. Advanced options let you choose software alternatives.</p>
-<h2>Windows and WSL</h2><pre>irm https://johnhenning.dev/tools/outfit/install.ps1 | iex
-irm https://johnhenning.dev/tools/outfit/profiles/workstation.ps1 | iex</pre>
+<h2>Windows and WSL</h2><pre>irm https://getoutfit.dev/install.ps1 | iex
+irm https://getoutfit.dev/profiles/workstation.ps1 | iex</pre>
 <p>Run the Unix commands inside your chosen WSL distribution for Linux development tools.</p>
 <h2>Make it yours</h2><p>Start from public templates. Fetch your private profile overlay after signing in to GitHub. Authorize 1Password when you need credentials; private keys and tokens stay out of the profile repos.</p>
-<pre>outfit personalize --repo johnhenning/outfit-personal
-outfit doctor</pre>
+<pre>outfit doctor</pre>
 <p><a href="https://github.com/johnhenning/outfit">CLI source &amp; documentation</a> · <a href="https://github.com/johnhenning/outfit-profiles">Public profile templates</a> · <a href="install.sh">Inspect installer</a></p>
 <p><small>This alpha reports manual installers and configuration steps. GPU drivers, media storage/services, and WSL provisioning need explicit setup. Cross-platform builds do not imply every fresh-machine install has been verified.</small></p>
 <script>

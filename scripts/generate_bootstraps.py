@@ -125,11 +125,12 @@ try {{
 }} @args
 '''
 
-def generate(lock,out):
+def generate(lock,out,profiles=None,default_profile=''):
  out.mkdir(parents=True,exist_ok=True)
  for mode in ['install','run']:
-  (out/(mode+'.sh')).write_text(shell(lock,mode));(out/(mode+'.ps1')).write_text(powershell(lock,mode))
- for profile in ['workstation','dev','compute','media']:
+  profile=default_profile if mode=='run' else ''
+  (out/(mode+'.sh')).write_text(shell(lock,mode,profile));(out/(mode+'.ps1')).write_text(powershell(lock,mode,profile))
+ for profile in (profiles if profiles is not None else ['workstation','dev','compute','media']):
   dest=out/'profiles';dest.mkdir(exist_ok=True);(dest/(profile+'.sh')).write_text(shell(lock,'run',profile));(dest/(profile+'.ps1')).write_text(powershell(lock,'run',profile))
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('lock',type=Path);p.add_argument('output',type=Path);a=p.parse_args();generate(json.loads(a.lock.read_text()),a.output)
+ p=argparse.ArgumentParser();p.add_argument('lock',type=Path);p.add_argument('output',type=Path);p.add_argument('--profiles',nargs='+');p.add_argument('--default-profile',default='');a=p.parse_args();generate(json.loads(a.lock.read_text()),a.output,a.profiles,a.default_profile)
