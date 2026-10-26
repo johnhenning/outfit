@@ -1,17 +1,22 @@
-// Both sites serve public static content. Never forward credentials upstream.
+// These endpoints serve public static content. Never forward credentials upstream.
 export default {
   async fetch(request) {
     const incoming = new URL(request.url);
     const general = incoming.hostname === 'getoutfit.dev';
     const dotfiles = incoming.hostname === 'johnhenning.dev' &&
       incoming.pathname === '/tools/dotfiles/install.sh';
+    const dotfilesOverview = incoming.hostname === 'johnhenning.dev' &&
+      (incoming.pathname === '/tools/dotfiles' || incoming.pathname === '/tools/dotfiles/');
     const personal = incoming.hostname === 'johnhenning.dev' &&
       (incoming.pathname === '/tools/outfit' || incoming.pathname.startsWith('/tools/outfit/'));
-    if (!general && !personal && !dotfiles) {
+    if (!general && !personal && !dotfiles && !dotfilesOverview) {
       return new Response('Not found', { status: 404 });
     }
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET, HEAD' } });
+    }
+    if (dotfilesOverview && incoming.pathname === '/tools/dotfiles') {
+      return Response.redirect(incoming.origin + '/tools/dotfiles/' + incoming.search, 308);
     }
     if (general && incoming.pathname === '/profiles') {
       return Response.redirect(incoming.origin + '/profiles/' + incoming.search, 308);
@@ -24,8 +29,8 @@ export default {
     }
     const upstream = dotfiles
       ? new URL('https://raw.githubusercontent.com/johnhenning/dotfiles/main/install.sh')
-      : new URL('https://johnhenning.github.io/');
-    if (!dotfiles) {
+      : new URL(dotfilesOverview ? 'https://johnhenning.github.io/outfit/dotfiles/' : 'https://johnhenning.github.io/');
+    if (!dotfiles && !dotfilesOverview) {
       let path = general ? incoming.pathname : incoming.pathname.slice('/tools/outfit'.length);
       if (personal) {
         path = path.replace(/^\/(v1\/)?install\.(sh|ps1)$/, '/$1run.$2');

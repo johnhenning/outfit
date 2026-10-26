@@ -5,16 +5,19 @@ The bootstrap site is generated from a release lock and deployed by GitHub Pages
 A Cloudflare Worker serves the general site at `https://getoutfit.dev/` from the
 Pages `/tools/outfit/` directory. The path `https://johnhenning.dev/tools/outfit/`
 serves the personal site from the Pages `/personal/` directory. The exact path
+`https://johnhenning.dev/tools/dotfiles/` serves a static overview from Pages
+`/dotfiles/`, with the slashless URL redirecting there. The exact path
 `https://johnhenning.dev/tools/dotfiles/install.sh` separately serves the public
 `johnhenning/dotfiles` bootstrap from its GitHub `main` branch. Other paths
-outside the Outfit namespace are outside its route. These endpoints reject non-GET/HEAD requests
+outside the Outfit namespace and recognized dotfiles paths are not served.
+These endpoints reject non-GET/HEAD requests
 and fetch public assets without forwarding credentials or cookies.
 
 `deploy/wrangler.jsonc` declares a Worker custom domain for the dedicated
-getoutfit.dev apex, the `/tools/outfit` namespace and the exact dotfiles installer
-path on johnhenning.dev. Its Cloudflare route ends in `*` to match query strings;
-the Worker still requires the exact `/tools/dotfiles/install.sh` pathname and
-rejects other suffixes. The dotfiles endpoint strips query parameters and uses
+getoutfit.dev apex, the `/tools/outfit` namespace and the `/tools/dotfiles*` prefix
+on johnhenning.dev. The latter ends in `*` to match the overview, installer and
+query strings; the Worker still requires the exact overview or installer
+pathname and rejects other suffixes. Dotfiles upstream requests strip query parameters and use
 the same five-minute successful-response cache policy as the other endpoints.
 Cloudflare provisions DNS/certificates for the custom domain; the path route
 still uses johnhenning.dev's existing proxied apex record. Preserve unrelated

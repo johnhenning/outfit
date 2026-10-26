@@ -37,7 +37,10 @@ jobs:
           mkdir published-site
           tar -xzf outfit-site.tar.gz -C published-site
       - name: Overlay current documentation
-        run: cp site/tools/outfit/index.html published-site/tools/outfit/index.html
+        run: |
+          cp site/tools/outfit/index.html published-site/tools/outfit/index.html
+          mkdir -p published-site/dotfiles
+          cp site/dotfiles/index.html published-site/dotfiles/index.html
       - name: Generate pinned personal endpoints
         env:
           GH_TOKEN: ${{ github.token }}
