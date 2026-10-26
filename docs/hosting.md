@@ -12,7 +12,9 @@ and fetch public assets without forwarding credentials or cookies.
 
 `deploy/wrangler.jsonc` declares a Worker custom domain for the dedicated
 getoutfit.dev apex, the `/tools/outfit` namespace and the exact dotfiles installer
-path on johnhenning.dev. The dotfiles endpoint strips query parameters and uses
+path on johnhenning.dev. Its Cloudflare route ends in `*` to match query strings;
+the Worker still requires the exact `/tools/dotfiles/install.sh` pathname and
+rejects other suffixes. The dotfiles endpoint strips query parameters and uses
 the same five-minute successful-response cache policy as the other endpoints.
 Cloudflare provisions DNS/certificates for the custom domain; the path route
 still uses johnhenning.dev's existing proxied apex record. Preserve unrelated
