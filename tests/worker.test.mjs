@@ -1,6 +1,26 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../deploy/worker.mjs';
+test('dotfiles overview canonicalizes its URL and serves the dedicated static page',async()=>{
+ const redirect=await worker.fetch(new Request('https://johnhenning.dev/tools/dotfiles?from=tools'));
+ assert.equal(redirect.status,308);
+ assert.equal(redirect.headers.get('Location'),'https://johnhenning.dev/tools/dotfiles/?from=tools');
+ const original=globalThis.fetch;
+ try{
+  for(const method of ['GET','HEAD']){
+   globalThis.fetch=async(input,options)=>{
+    assert.equal(String(input),'https://johnhenning.github.io/outfit/dotfiles/');
+    assert.deepEqual(options,{method,redirect:'manual'});
+    return new Response(method==='HEAD'?null:'<h1>John’s dotfiles</h1>',{headers:{'Content-Type':'text/html'}});
+   };
+   const response=await worker.fetch(new Request('https://johnhenning.dev/tools/dotfiles/?from=tools',{method,headers:{Authorization:'secret',Cookie:'secret'}}));
+   assert.equal(response.status,200);
+   assert.equal(response.headers.get('Content-Type'),'text/html');
+  }
+ }finally{globalThis.fetch=original;}
+ assert.equal((await worker.fetch(new Request('https://johnhenning.dev/tools/dotfiles/',{method:'POST'}))).status,405);
+ assert.equal((await worker.fetch(new Request('https://johnhenning.dev/tools/dotfiles-other'))).status,404);
+});
 test('serves the standalone dotfiles installer without forwarding credentials or queries',async()=>{
  const original=globalThis.fetch;
  try{
