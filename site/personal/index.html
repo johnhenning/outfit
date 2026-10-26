@@ -14,7 +14,7 @@
 </style>
 <h1>John’s outfit</h1>
 <p>Personal Mac selections. Everyday and Dev are independent profiles.</p>
-<p>These are public, nonsecret configurations. Sign in to 1Password and individual apps afterward for private credentials and synced data. No GitHub authentication is needed to download these profiles.</p>
+<p>These are public, nonsecret app selections. Sign in to 1Password and individual apps afterward for private credentials and synced data. No GitHub authentication is needed to download these profiles.</p>
 <h2>Mac Everyday</h2>
 <p>Daily apps and Mac utilities, including Spotify, Setapp, Bartender, Rectangle Pro and Raycast.</p>
 <pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/mac/everyday.sh | sh -s -- --dry-run</pre>
@@ -22,13 +22,17 @@
 <h2>Mac Dev</h2>
 <p>Development tools with Dia, VS Code, Neovim and iTerm2 preferences. Spotify and the Everyday-only utilities are excluded.</p>
 <pre>curl -fsSL https://johnhenning.dev/tools/outfit/profiles/mac/dev.sh | sh -s -- --dry-run</pre>
+<h2>Personal dotfiles</h2>
+<p>Shell, PATH, tmux, uv, Git and the preserved NvChad setup live in a separate <a href="https://github.com/johnhenning/dotfiles">dotfiles repository</a>. Preview first:</p>
+<pre>curl -fsSL https://raw.githubusercontent.com/johnhenning/dotfiles/main/install.sh | sh</pre>
+<p>To apply after reviewing, append <code>-s -- --apply</code> to <code>sh</code>. Existing managed files are backed up before replacement. Optional tools and framework installation are separate steps in the dotfiles README.</p>
 <h2>After installing</h2>
 <ul><li>Sign in to 1Password; enable the SSH agent and optional CLI integration.</li>
 <li>Sign in to apps to restore their private synced data.</li>
 <li>Everyday: sign in to Setapp and install CleanShot X and Paste there. Activate paid apps with your licenses.</li>
 <li>Everyday: enable launch at login for Bartender, Rectangle Pro and Raycast. This remains a manual step.</li>
 <li>Dev: finish the guided Oh My Zsh and Powerlevel10k installs if desired.</li>
-<li>Review and apply dotfiles separately. Existing private SSH configs require manual merging; no keys or sessions are restored from these public files.</li></ul>
+<li>Review and apply the standalone dotfiles separately. The optional 1Password SSH example requires manual merging; no keys or sessions are restored from public files.</li></ul>
 <p>The personal <code>install.sh</code> and <code>run.sh</code> entry points start Everyday setup. To install only the general CLI, use <a href="https://getoutfit.dev/">getoutfit.dev</a>.</p>
 <p><a href="https://github.com/johnhenning/outfit-personal">Review the personal selections and configuration sources</a> · <a href="https://getoutfit.dev/">General Outfit profiles</a></p>
 <p><small>Mac profiles are reviewed; compute and media personal profiles await review. The scripts verify pinned CLI and bundle checksums before setup. No software is installed by a dry run.</small></p>

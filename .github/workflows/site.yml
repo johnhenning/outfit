@@ -9,7 +9,7 @@ on:
         required: true
       personal_version:
         description: Published nonsecret personal bundle release
-        default: v0.1.0-alpha.2
+        default: v0.1.0-alpha.3
         required: true
 permissions:
   contents: read
@@ -41,7 +41,7 @@ jobs:
       - name: Generate pinned personal endpoints
         env:
           GH_TOKEN: ${{ github.token }}
-          PERSONAL_VERSION: ${{ inputs.personal_version || 'v0.1.0-alpha.2' }}
+          PERSONAL_VERSION: ${{ inputs.personal_version || 'v0.1.0-alpha.3' }}
           RELEASE_VERSION: ${{ inputs.version || github.event.release.tag_name }}
         run: |
           gh release download "$RELEASE_VERSION" --pattern release-lock.json
