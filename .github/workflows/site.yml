@@ -66,7 +66,7 @@ jobs:
           gh release download "$RELEASE_VERSION" --pattern "outfit_${RELEASE_VERSION}_linux_amd64" --dir browser-engine
           chmod +x "browser-engine/outfit_${RELEASE_VERSION}_linux_amd64"
           go run ./cmd/outfit-profile-browser --lock release-lock.json --engine "browser-engine/outfit_${RELEASE_VERSION}_linux_amd64" --output published-site/tools/outfit/profiles/index.html
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v3
         with:
           path: published-site
