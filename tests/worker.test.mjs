@@ -1,6 +1,29 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../deploy/worker.mjs';
+test('serves the standalone dotfiles installer without forwarding credentials or queries',async()=>{
+ const original=globalThis.fetch;
+ try{
+  for(const method of ['GET','HEAD']){
+   globalThis.fetch=async(input,options)=>{
+    assert.equal(String(input),'https://raw.githubusercontent.com/johnhenning/dotfiles/main/install.sh');
+    assert.deepEqual(options,{method,redirect:'manual'});
+    return new Response(method==='HEAD'?null:'#!/bin/sh\necho dotfiles\n',{status:200});
+   };
+   const response=await worker.fetch(new Request('https://johnhenning.dev/tools/dotfiles/install.sh?ignored=1',{method,headers:{Authorization:'secret',Cookie:'session=secret'}}));
+   assert.equal(response.status,200);
+   assert.equal(response.headers.get('X-Content-Type-Options'),'nosniff');
+   assert.equal(response.headers.get('Cache-Control'),'public, max-age=300');
+   assert.equal(await response.text(),method==='HEAD'?'':'#!/bin/sh\necho dotfiles\n');
+  }
+ }finally{globalThis.fetch=original;}
+});
+test('dotfiles route is restricted to its exact installer and read methods',async()=>{
+ assert.equal((await worker.fetch(new Request('https://johnhenning.dev/tools/dotfiles/install.sh',{method:'POST'}))).status,405);
+ for(const url of ['https://johnhenning.dev/tools/dotfiles/other.sh','https://johnhenning.dev/tools/dotfiles/install.sh/extra','https://unrelated.dev/tools/dotfiles/install.sh']){
+  assert.equal((await worker.fetch(new Request(url))).status,404);
+ }
+});
 test('only serves the Outfit namespace and read methods',async()=>{
  assert.equal((await worker.fetch(new Request('https://johnhenning.dev/'))).status,404);
  assert.equal((await worker.fetch(new Request('https://johnhenning.dev/tools/outfit/run.sh',{method:'POST'}))).status,405);

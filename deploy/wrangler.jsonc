@@ -6,6 +6,10 @@
   "workers_dev": true,
   "routes": [
     {
+      "pattern": "johnhenning.dev/tools/dotfiles/install.sh*",
+      "zone_name": "johnhenning.dev"
+    },
+    {
       "pattern": "getoutfit.dev",
       "custom_domain": true
     },
